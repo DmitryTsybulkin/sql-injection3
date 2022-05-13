@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+      <meta charset="UTF-8" />
+      <script src="webjars/jquery/3.0.0/jquery.min.js"></script>
+      <title>Welcome</title>
+   </head>
+   <body>
+      <h1>Welcome</h1>
+      <ul id="content">
+      </ul>
+   <input id="filter" type="text" name="filterByName"/>
+   <input id="filterBtn" type="button" value="filter"/>
+
+   </body>
+<script>
+var isAllDataLoaded = false;
+        function allData(){
+        isAllDataLoaded = true;
+            $.getJSON("/employees", function (data) {
+                  data.forEach(e=>{
+                  $('#content').append('<li>' + e.name + ' ' + e.role + '</li>')
+                  }
+               )
+            }
+          )
+        }
+
+$(document).ready(
+   allData()
+    );
+    const filterBtn = document.getElementById("filterBtn");
+    filterBtn.addEventListener('click', ()=> {
+         const filter = document.getElementById("filter").value;
+         if (filter === '' && !isAllDataLoaded){
+            allData();
+         }
+         if(filter !== '') {
+         $.getJSON("/filterEmployee?name="+filter, (data)=> {
+            isAllDataLoaded = false;
+            data.forEach(e=>{
+                  $('#content').empty();
+                  $('#content').append('<li>' + e.name + ' ' + e.role + '</li>');
+            })
+         }
+        )
+        }
+        }
+    )
+</script>
+</html>
